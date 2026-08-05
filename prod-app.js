@@ -87,7 +87,7 @@ function showEmployeeLogin() {
       const { data: staffData } = await supabase
         .from('staff')
         .select('*')
-        .eq('id', user.id)
+        .eq('auth_user_id', user.id)
         .single();
       
       appState.user = { ...user, ...staffData };
@@ -133,7 +133,7 @@ function showOwnerLogin() {
       const { data: staffData } = await supabase
         .from('staff')
         .select('*')
-        .eq('id', user.id)
+        .eq('auth_user_id', user.id)
         .single();
       
       appState.user = { ...user, ...staffData };
