@@ -4,6 +4,22 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const SUPABASE_URL = 'https://jgyjiazhpbuwhblgjvdb.supabase.co'; // 
 const SUPABASE_KEY = 'sb_publishable_OgokxparfvlBRYpC_mod4g_656YldMT'; // 
 
+// Employee demo data
+const DEMO_USERS = {
+  employee: {
+    email: 'cashier1@watermelonsoda.com',
+    password: 'Password123!'
+  },
+  manager: {
+    email: 'manager1@watermelonsoda.com',
+    password: 'Password321!'
+  },
+  owner: {
+    email: 'owner@watermelonsoda.com',
+    password: 'Melon2026!'
+  }
+};
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Encryption utility
