@@ -42,9 +42,20 @@ async function hydrateSession(user) {
 
   const { data: staff, error } = await supabase
     .from('staff')
-    .select(
-      'id, auth_user_id, outlet_id, name, email, role, active, outlets(id,name,location)'
-    )
+   .select(`
+  id,
+  auth_user_id,
+  outlet_id,
+  name,
+  email,
+  role,
+  active,
+  outlets!staff_outlet_id_fkey(
+    id,
+    name,
+    location
+  )
+`)
     .eq('auth_user_id', user.id)
     .eq('active', true)
     .single();
