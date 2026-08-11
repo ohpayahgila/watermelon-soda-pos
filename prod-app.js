@@ -61,6 +61,7 @@ async function hydrateSession(user) {
     .single();
 
   if (error || !staff) {
+    console.error('Staff profile error:', error);
     await supabase.auth.signOut();
     throw new Error(
       'Your login exists, but no active staff profile is linked to it.'
