@@ -573,7 +573,18 @@ function openCloseShift(){ modal(`<form id="closeShiftForm" class="form-stack"><
 
 async function renderStaffAdmin(){
   const view=document.getElementById('view'); view.innerHTML='<section class="management-page"><div class="section-head"><div><p class="eyebrow">Owner</p><h1>Staff access</h1><p>Cashier → Supervisor → Manager. Owner remains unrestricted.</p></div></div><div id="staffTable" class="table-card"><div class="empty-state">Loading…</div></div></section>';
-  const {data,error}=await supabase.from('staff').select('id,name,email,role,active,outlet_id,outlets(name)').order('name');
+  const {data,error}=await supabase
+  .from('staff')
+  .select(`
+    id,
+    name,
+    email,
+    role,
+    active,
+    outlet_id,
+    outlets!staff_outlet_id_fkey(name)
+  `)
+  .order('name');
   if(error){document.getElementById('staffTable').innerHTML=`<div class="empty-state">${escapeHtml(error.message)}</div>`;return;}
   document.getElementById('staffTable').innerHTML=`<table><thead><tr><th>Name</th><th>Email</th><th>Outlet</th><th>Access level</th><th>PIN</th><th>Active</th></tr></thead><tbody>${(data||[]).map(r=>`<tr><td><strong>${escapeHtml(r.name)}</strong></td><td>${escapeHtml(r.email)}</td><td>${escapeHtml(r.outlets?.name||'—')}</td><td>${r.role==='owner'?'<span class="status on">OWNER</span>':`<select class="role-select" data-role-staff="${r.id}"><option value="cashier" ${r.role==='cashier'?'selected':''}>1 · Cashier</option><option value="supervisor" ${r.role==='supervisor'?'selected':''}>2 · Supervisor</option><option value="manager" ${r.role==='manager'?'selected':''}>3 · Manager</option></select>`}</td><td><button class="btn ghost small" data-set-pin="${r.id}">Set PIN</button></td><td>${r.role==='owner'?'—':`<input type="checkbox" data-active-staff="${r.id}" ${r.active?'checked':''}>`}</td></tr>`).join('')}</tbody></table>`;
   document.querySelectorAll('[data-role-staff]').forEach(el=>el.onchange=async()=>{const {error}=await supabase.from('staff').update({role:el.value}).eq('id',el.dataset.roleStaff); if(error){toast(error.message,'error');return renderStaffAdmin();} toast('Staff level updated','success');});
